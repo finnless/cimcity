@@ -3,93 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIM CITY</title>
+    <title>CIM CITY - Financial Extractor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #f4f7f6;
-            margin: 0;
-            color: #333;
-        }
-        #drop-area {
-            border: 3px dashed #ccc;
-            border-radius: 20px;
-            width: 80%;
-            max-width: 600px;
-            padding: 50px;
-            text-align: center;
-            transition: border-color 0.3s, background-color 0.3s;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+        /* Minimal custom style for highlight effect if needed, Tailwind handles most */
         #drop-area.highlight {
-            border-color: #007bff;
-            background-color: #e9f5ff;
+            border-color: #3b82f6; /* Tailwind blue-500 */
+            background-color: #eff6ff; /* Tailwind blue-50 */
         }
-        #drop-area p {
-            margin: 0;
-            font-size: 1.2em;
-            color: #555;
-        }
-        #file-input {
-            display: none;
-        }
-        label[for="file-input"] {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        label[for="file-input"]:hover {
-            background-color: #0056b3;
-        }
-        #response-area {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px solid #eee;
-            background-color: #fff;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 600px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            overflow-wrap: break-word;
-            /* Table styling */
-        }
+        /* Basic table styling (can be enhanced further with Tailwind) */
         #response-area table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1em;
-            margin-bottom: 1em;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
             font-size: 0.9em;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 0.375rem; /* rounded-md */
+            overflow: hidden; /* Ensures border radius applies to content */
         }
-        #response-area th, #response-area td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        #response-area th,
+        #response-area td {
+            border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+            padding: 0.75rem 1rem; /* p-3 */
             text-align: left;
         }
         #response-area th {
-            background-color: #f2f2f2;
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            font-weight: 600; /* font-semibold */
         }
-        h1 {
-            color: #0056b3;
-            margin-bottom: 40px;
+        #response-area tr:nth-child(even) {
+             background-color: #f9fafb; /* Tailwind gray-50 */
+        }
+        #response-area h3 {
+            margin-top: 1.5rem; /* mt-6 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937; /* Tailwind gray-800 */
         }
         .spinner {
           border: 4px solid rgba(0, 0, 0, 0.1);
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          border-left-color: #007bff;
+          border-left-color: #3b82f6; /* Tailwind blue-500 */
           animation: spin 1s ease infinite;
           margin: 20px auto; /* Center spinner */
           display: none; /* Hidden by default */
@@ -99,40 +58,36 @@
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
-        .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #28a745; /* Green color for download */
-            color: white;
-            border-radius: 5px;
-            text-decoration: none; /* Remove underline from link */
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .button:hover {
-            background-color: #218838; /* Darker green on hover */
-        }
     </style>
 </head>
-<body>
-    <h1>CIM CITY</h1>
-    <div id="drop-area">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Add Logo -->
+    <img src="/static/cimcitylogo.png" alt="CIM CITY Logo" class="h-16 mb-4"> 
+
+    <h1 class="text-4xl font-bold text-blue-700 mb-8">CIM CITY</h1>
+
+    <div id="drop-area" class="bg-white border-3 border-dashed border-gray-300 rounded-lg w-full max-w-xl p-8 text-center transition duration-300 ease-in-out shadow-md">
         <form class="upload-form">
-            <p>Drag & Drop PDF here</p>
-            <p>or</p>
-            <input type="file" id="file-input" accept="application/pdf">
-            <label for="file-input">Select File</label>
+            <p class="text-gray-600 text-lg mb-2">Drag & Drop PDF here</p>
+            <p class="text-gray-500 mb-4">or</p>
+            <input type="file" id="file-input" accept="application/pdf" class="hidden">
+            <label for="file-input" class="inline-block px-6 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition duration-300">
+                Select File
+            </label>
         </form>
         <div class="spinner" id="spinner"></div>
     </div>
 
-    <div id="response-area">
-        <p>Financial tables will appear here...</p>
+    <div id="response-area" class="mt-8 p-6 bg-white rounded-lg w-full max-w-xl shadow-md text-gray-800 min-h-[100px]">
+        <p class="text-gray-500">Financial tables will appear here...</p>
+        <!-- Tables will be injected here with the styles defined above -->
     </div>
 
-    <!-- Add Download Button (initially hidden) -->
-    <a href="/static/financial_tables_project_claret.xlsx" download="financial_tables_project_claret.xlsx" id="download-button" class="button" style="display: none;">Download Excel</a>
+    <!-- Download Button (initially hidden) -->
+    <a href="#" download id="download-button" class="mt-6 px-6 py-2 bg-green-600 text-white rounded-md cursor-pointer hover:bg-green-700 transition duration-300" style="display: none;">
+        Download Excel
+    </a>
 
     <script>
         const dropArea = document.getElementById('drop-area');
@@ -140,6 +95,8 @@
         const responseArea = document.getElementById('response-area');
         const spinner = document.getElementById('spinner');
         const downloadButton = document.getElementById('download-button'); // Get the button
+        const fileInputLabel = document.querySelector('label[for="file-input"]'); // Get the label
+        const dropAreaForm = dropArea.querySelector('.upload-form'); // Get the form inside drop area
 
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -187,28 +144,57 @@
         }
 
         function handleFiles(files) {
+            if (files.length === 0) return; // No file selected/dropped
+
             if (files.length > 1) {
-                alert("Please upload only one file at a time.");
+                showError("Please upload only one file at a time.");
+                resetFileInput();
                 return;
             }
             const file = files[0];
             if (file.type !== 'application/pdf') {
-                alert("Please upload a PDF file.");
+                showError("Please upload a PDF file.");
+                resetFileInput();
                 return;
             }
             uploadFile(file);
-            // Reset file input to allow uploading the same file again
+            resetFileInput(); // Reset after initiating upload
+        }
+
+        function resetFileInput() {
+             // Reset file input to allow uploading the same file again if needed
             fileInput.value = '';
         }
+
+        function showProcessingState(fileName) {
+            responseArea.innerHTML = `<p class="text-gray-600">Processing ${fileName}...</p>`;
+            spinner.style.display = 'block';
+            downloadButton.style.display = 'none'; // Hide button during processing
+            dropAreaForm.style.display = 'none'; // Hide form elements
+        }
+
+        function showIdleState(message = '<p class="text-gray-500">Financial tables will appear here...</p>') {
+            responseArea.innerHTML = message;
+            spinner.style.display = 'none'; // Hide spinner
+            downloadButton.style.display = 'none'; // Ensure button is hidden initially or after error
+            dropAreaForm.style.display = 'block'; // Show form elements
+        }
+
+         function showError(errorText) {
+            responseArea.innerHTML = `<p class="text-red-600 font-semibold">${errorText}</p>`;
+            spinner.style.display = 'none';
+            downloadButton.style.display = 'none';
+            dropAreaForm.style.display = 'block'; // Show form elements again
+            console.error('Error:', errorText);
+         }
+
 
         async function uploadFile(file) {
             const url = '/extract_financials/'; // Your FastAPI endpoint
             const formData = new FormData();
             formData.append('file', file);
 
-            responseArea.innerHTML = '<p>Uploading and processing...</p>';
-            spinner.style.display = 'block'; // Show spinner
-            downloadButton.style.display = 'none'; // Hide button during processing
+            showProcessingState(file.name);
 
             try {
                 const response = await fetch(url, {
@@ -216,26 +202,45 @@
                     body: formData,
                 });
 
-                spinner.style.display = 'none'; // Hide spinner
+                spinner.style.display = 'none'; // Hide spinner regardless of outcome
+                dropAreaForm.style.display = 'block'; // Show form elements again
 
                 if (response.ok) {
                     const result = await response.json();
-                    // Use marked.parse to convert markdown to HTML
-                    responseArea.innerHTML = marked.parse(result.content || 'No content extracted.');
-                    downloadButton.style.display = 'inline-block'; // Show button on success
+                    responseArea.innerHTML = ''; // Clear previous content like "Processing..."
+
+                    if (result.html_tables && result.html_tables.length > 0) {
+                        // Inject HTML tables - assuming they have basic structure
+                        // The CSS above will style them
+                        responseArea.innerHTML = result.html_tables.join('');
+                    } else {
+                        responseArea.innerHTML = '<p class="text-gray-600">No financial tables were extracted.</p>';
+                    }
+
+                    if (result.excel_file_path) {
+                        downloadButton.href = result.excel_file_path;
+                        // Extract filename from path for the download attribute
+                        const filename = result.excel_file_path.split('/').pop();
+                        downloadButton.setAttribute('download', filename);
+                        downloadButton.style.display = 'inline-block'; // Show button
+                    } else {
+                        downloadButton.style.display = 'none'; // Keep button hidden
+                    }
                 } else {
-                    const errorResult = await response.text(); // Get raw text for more info
-                    const errorText = `Error: ${response.status} ${response.statusText}\n${errorResult}`;
-                    responseArea.textContent = errorText;
-                    console.error('Upload failed:', response.status, errorResult);
+                    // Improved error display using showError function
+                    const errorData = await response.json().catch(() => null); // Try parsing JSON error first
+                    const errorDetail = errorData?.detail || await response.text() || `HTTP error ${response.status}`; // Fallback chain
+                    showError(`Upload Failed: ${errorDetail}`);
                 }
             } catch (error) {
-                spinner.style.display = 'none'; // Hide spinner
-                downloadButton.style.display = 'none'; // Ensure button is hidden on network error
-                responseArea.textContent = `Network Error: ${error.message}`;
-                console.error('Network error:', error);
+                 // Handle network errors or other fetch issues
+                showError(`Network Error: ${error.message}`);
             }
         }
+
+        // Initialize
+        showIdleState();
+
     </script>
 </body>
 </html> 
